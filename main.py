@@ -127,8 +127,9 @@ def vertAtTime(t, street : Street, data: Dataset) -> bool:
 
 
 def score(data: Dataset):
+    print("\nscoring")
     score = 0
-    for t in range(data.duration):
+    for t in tqdm.tqdm(range(data.duration)):
         #reset all streets
         for street_name in data.streets:
             street = data.streets[street_name]
@@ -141,14 +142,15 @@ def score(data: Dataset):
                 #check if space available
                 car.secLeft -= 1
             else:
-                if (vertAtTime(t, car.streets[car.pos], data) 
-                            and car.id == data.streets[car.streets[car.pos].name].cars[0] 
-                            and data.streets[car.streets[car.pos].name].carPassed == False):
+                if len(data.streets[car.streets[car.pos].name].cars) > 0:
+                    if (vertAtTime(t, car.streets[car.pos], data) 
+                                and car.id == data.streets[car.streets[car.pos].name].cars[0] 
+                                and data.streets[car.streets[car.pos].name].carPassed == False):
 
-                    data.streets[car.streets[car.pos].name].cars.pop(0)
-                    data.streets[car.streets[car.pos].name].carPassed = True
-                    car.pos += 1
-                    car.secLeft = data.streets[car.streets[car.pos].name].lgth
+                        data.streets[car.streets[car.pos].name].cars.pop(0)
+                        data.streets[car.streets[car.pos].name].carPassed = True
+                        car.pos += 1
+                        car.secLeft = data.streets[car.streets[car.pos].name].lgth
                 else:
                     data.streets[car.streets[car.pos].name].cars.append(car.id)
     return score
